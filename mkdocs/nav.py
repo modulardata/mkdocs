@@ -66,7 +66,7 @@ class SiteNavigation(object):
     @property
     def source_files(self):
         if not hasattr(self, '_source_files'):
-            self._source_files = set([page.input_path for page in self.pages])
+            self._source_files = {page.input_path for page in self.pages}
         return self._source_files
 
 
@@ -94,10 +94,7 @@ class URLContext(object):
         suffix = '/' if (url.endswith('/') and len(url) > 1) else ''
         # Workaround for bug on `os.path.relpath()` in Python 2.6
         if self.base_path == '/':
-            if url == '/':
-                # Workaround for static assets
-                return '.'
-            return url.lstrip('/')
+            return '.' if url == '/' else url.lstrip('/')
         # Under Python 2.6, relative_path adds an extra '/' at the end.
         relative_path = os.path.relpath(url, start=self.base_path)
         relative_path = relative_path.rstrip('/') + suffix
@@ -240,8 +237,14 @@ def _follow(config_line, url_context, use_dir_urls, header=None, title=None):
 
     if isinstance(subpages_or_path, utils.string_types):
         path = subpages_or_path
-        for sub in _follow(path, url_context, use_dir_urls, header=header, title=next_cat_or_title):
-            yield sub
+        yield from _follow(
+            path,
+            url_context,
+            use_dir_urls,
+            header=header,
+            title=next_cat_or_title,
+        )
+
         raise StopIteration
 
     elif not isinstance(subpages_or_path, list):
@@ -259,8 +262,7 @@ def _follow(config_line, url_context, use_dir_urls, header=None, title=None):
     subpages = subpages_or_path
 
     for subpage in subpages:
-        for sub in _follow(subpage, url_context, use_dir_urls, next_header):
-            yield sub
+        yield from _follow(subpage, url_context, use_dir_urls, next_header)
 
 
 def _generate_site_navigation(pages_config, url_context, use_dir_urls=True):
@@ -295,7 +297,7 @@ def _generate_site_navigation(pages_config, url_context, use_dir_urls=True):
                     previous.next_page = page_or_header
                 previous = page_or_header
 
-    if len(pages) == 0:
+    if not pages:
         raise exceptions.ConfigurationError(
             "No pages found in the pages config. "
             "Remove it entirely to enable automatic page discovery.")

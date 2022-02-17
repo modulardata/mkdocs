@@ -118,8 +118,8 @@ class BuildTests(unittest.TestCase):
 
         template = '<p><img alt="The initial MkDocs layout" src="%s" /></p>'
 
+        md_text = '![The initial MkDocs layout](img/initial-layout.png)'
         for (page, expected) in zip(site_navigation.walk_pages(), expected_results):
-            md_text = '![The initial MkDocs layout](img/initial-layout.png)'
             html, _, _ = build.convert_markdown(md_text, load_config(), site_navigation=site_navigation)
             self.assertEqual(html, template % expected)
 
@@ -141,8 +141,8 @@ class BuildTests(unittest.TestCase):
 
         template = '<p><img alt="The initial MkDocs layout" src="%s" /></p>'
 
+        md_text = '![The initial MkDocs layout](/img/initial-layout.png)'
         for (page, expected) in zip(site_navigation.walk_pages(), expected_results):
-            md_text = '![The initial MkDocs layout](/img/initial-layout.png)'
             html, _, _ = build.convert_markdown(md_text, load_config(), site_navigation=site_navigation)
             self.assertEqual(html, template % expected)
 
@@ -161,8 +161,8 @@ class BuildTests(unittest.TestCase):
         </code></pre>
         """)
 
+        markdown = 'An HTML Anchor::\n\n    <a href="index.md">My example link</a>\n'
         for page in site_navigation.walk_pages():
-            markdown = 'An HTML Anchor::\n\n    <a href="index.md">My example link</a>\n'
             html, _, _ = build.convert_markdown(markdown, load_config(), site_navigation=site_navigation)
             self.assertEqual(dedent(html), expected)
 
@@ -175,8 +175,8 @@ class BuildTests(unittest.TestCase):
 
         site_navigation = nav.SiteNavigation(pages)
 
+        markdown = '[test](#test)'
         for page in site_navigation.walk_pages():
-            markdown = '[test](#test)'
             html, _, _ = build.convert_markdown(markdown, load_config(), site_navigation=site_navigation)
             self.assertEqual(html, '<p><a href="#test">test</a></p>')
 
@@ -281,9 +281,8 @@ class BuildTests(unittest.TestCase):
         docs_dir = tempfile.mkdtemp()
         site_dir = tempfile.mkdtemp()
         try:
-            # Create a non-empty markdown file, image, dot file and dot directory.
-            f = open(os.path.join(docs_dir, 'index.md'), 'w')
-            f.write(dedent("""
+            with open(os.path.join(docs_dir, 'index.md'), 'w') as f:
+                f.write(dedent("""
                 page_title: custom title
 
                 # Heading 1
@@ -294,7 +293,6 @@ class BuildTests(unittest.TestCase):
 
                 And some more text.
             """))
-            f.close()
             open(os.path.join(docs_dir, 'img.jpg'), 'w').close()
             open(os.path.join(docs_dir, '.hidden'), 'w').close()
             os.mkdir(os.path.join(docs_dir, '.git'))

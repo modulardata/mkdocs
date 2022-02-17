@@ -117,9 +117,5 @@ def pages_compat_shim(original_pages):
             # be just the path string.
             for j, page in enumerate(pages):
                 title, path = page.popitem()
-                if title:
-                    pages[j] = {title: path}
-                else:
-                    pages[j] = path
-
+                pages[j] = {title: path} if title else path
     return new_pages

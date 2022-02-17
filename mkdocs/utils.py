@@ -7,6 +7,7 @@ Nothing in this module should have an knowledge of config or the layout
 and structure of the site and pages in the site.
 """
 
+
 from __future__ import unicode_literals
 import os
 import sys
@@ -25,12 +26,10 @@ except ImportError:                                         # pragma: no cover
     from UserDict import UserDict                           # noqa
 
 
-PY3 = sys.version_info[0] == 3
-
-if PY3:                         # pragma: no cover
+if PY3 := sys.version_info[0] == 3:
     string_types = str,         # noqa
     text_type = str             # noqa
-else:                           # pragma: no cover
+else:
     string_types = basestring,  # noqa
     text_type = unicode         # noqa
 
@@ -114,7 +113,7 @@ def get_html_path(path):
     """
     path = os.path.splitext(path)[0]
     if os.path.basename(path) == 'index':
-        return path + '.html'
+        return f'{path}.html'
     return "/".join((path, 'index.html'))
 
 
@@ -272,10 +271,7 @@ def create_relative_media_url(nav, url):
 def path_to_url(path):
     """Convert a system path to a URL."""
 
-    if os.path.sep == '/':
-        return path
-
-    return pathname2url(path)
+    return path if os.path.sep == '/' else pathname2url(path)
 
 
 def convert_markdown(markdown_source, extensions=None, extension_configs=None):

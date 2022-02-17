@@ -87,7 +87,7 @@ class OptionallyRequired(BaseConfigOption):
                 value = self.default
             elif not self.required:
                 return
-            elif self.required:
+            else:
                 raise ValidationError("Required configuration not provided.")
 
         return self.run_validation(value)
@@ -256,7 +256,7 @@ class ThemeDir(Dir):
 
     def post_validation(self, config, key_name):
 
-        theme_in_config = any(['theme' in c for c in config.user_configs])
+        theme_in_config = any('theme' in c for c in config.user_configs)
 
         package_dir = os.path.abspath(
             os.path.join(os.path.dirname(__file__), '..'))
@@ -336,10 +336,7 @@ class Extras(OptionallyRequired):
         if config[key_name] is not None:
             return
 
-        extras = []
-
-        for filename in self.walk_docs_dir(config['docs_dir']):
-            extras.append(filename)
+        extras = list(self.walk_docs_dir(config['docs_dir']))
 
         config[key_name] = extras
 
@@ -366,7 +363,7 @@ class Pages(Extras):
             return
 
         # TODO: Remove in 1.0
-        config_types = set(type(l) for l in value)
+        config_types = {type(l) for l in value}
 
         if config_types.issubset(set([utils.text_type, dict, str])):
             return value
