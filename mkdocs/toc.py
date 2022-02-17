@@ -67,10 +67,9 @@ class TOCParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
 
-        if not self.in_anchor:
-            if tag == 'a':
-                self.in_anchor = True
-                self.attrs = dict(attrs)
+        if not self.in_anchor and tag == 'a':
+            self.in_anchor = True
+            self.attrs = dict(attrs)
 
     def handle_endtag(self, tag):
         if tag == 'a':

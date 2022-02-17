@@ -55,11 +55,9 @@ class Config(utils.UserDict):
             except ValidationError as e:
                 failed.append((key, e))
 
-        for key in (set(self.keys()) - self._schema_keys):
-            warnings.append((
+        warnings.extend((
                 key, "Unrecognised configuration name: {0}".format(key)
-            ))
-
+            ) for key in (set(self.keys()) - self._schema_keys))
         return failed, warnings
 
     def _pre_validate(self):

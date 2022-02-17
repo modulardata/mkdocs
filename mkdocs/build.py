@@ -100,11 +100,7 @@ def get_page_context(page, content, toc, meta, config):
     else:
         page_title = page.title
 
-    if page.is_homepage:
-        page_description = config['site_description']
-    else:
-        page_description = None
-
+    page_description = config['site_description'] if page.is_homepage else None
     if config['site_url']:
         base = config['site_url']
         if not base.endswith('/'):
@@ -306,7 +302,4 @@ def site_directory_contains_stale_files(site_directory):
     A more sophisticated approach should be found to trigger only if there are
     files that won't be overwritten anyway.
     """
-    if os.path.exists(site_directory):
-        if os.listdir(site_directory):
-            return True
-    return False
+    return bool(os.path.exists(site_directory) and os.listdir(site_directory))

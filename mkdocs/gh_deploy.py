@@ -13,9 +13,13 @@ def gh_deploy(config, message=None):
                  'repository')
         return
 
-    command = ['ghp-import', '-p', config['site_dir']]
+    command = [
+        'ghp-import',
+        '-p',
+        config['site_dir'],
+        *['-b', config['remote_branch']],
+    ]
 
-    command.extend(['-b', config['remote_branch']])
 
     if message is not None:
         command.extend(['-m', message])
@@ -61,4 +65,4 @@ def gh_deploy(config, message=None):
         if repo.endswith('.git'):
             repo = repo[:-len('.git')]
         url = 'http://%s.github.io/%s' % (username, repo)
-        log.info('Your documentation should shortly be available at: ' + url)
+        log.info(f'Your documentation should shortly be available at: {url}')
